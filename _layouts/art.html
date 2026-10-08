@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page.title }} · {{ site.title }}</title>
+  <meta name="description" content="{{ page.description | default: site.description }}">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ '/assets/css/art.css' | relative_url }}">
+</head>
+<body>
+
+  <header class="hero">
+    <canvas class="painting" id="hero-canvas" data-seed="1890" data-palette="harrow" data-scene="landscape" aria-hidden="true"></canvas>
+    <nav class="hero__nav"><a href="{{ '/' | relative_url }}">&larr; {{ site.author.name }}</a></nav>
+    <div class="hero__title">
+      <h1>{{ page.title }}</h1>
+      {% if page.subtitle %}<p>{{ page.subtitle }}</p>{% endif %}
+    </div>
+  </header>
+
+  <main class="canvas-paper">
+    <section class="intro">
+      {{ content }}
+    </section>
+
+    <section class="gallery">
+      {% assign works = site.data.artworks %}
+      {% if works and works.size > 0 %}
+        {% for w in works %}
+        <figure class="work">
+          <button class="frame" type="button" data-full="{{ w.image | relative_url }}" data-caption="{{ w.title | escape }}{% if w.year %}, {{ w.year }}{% endif %}{% if w.medium %} · {{ w.medium | escape }}{% endif %}">
+            <img src="{{ w.image | relative_url }}" alt="{{ w.title | escape }}" loading="lazy">
+          </button>
+          <figcaption>
+            <span class="work__title">{{ w.title }}</span>{% if w.year %}<span class="work__year">, {{ w.year }}</span>{% endif %}
+            {% if w.medium %}<span class="work__medium">{{ w.medium }}</span>{% endif %}
+            {% if w.note %}<span class="work__note">{{ w.note }}</span>{% endif %}
+          </figcaption>
+        </figure>
+        {% endfor %}
+      {% else %}
+        {% assign placeholders = "harrow:1:4/5,starry:2:4/3,wheat:3:4/5,harrow:4:4/3,starry:5:4/5,wheat:6:4/3" | split: "," %}
+        {% for p in placeholders %}
+        {% assign q = p | split: ":" %}
+        <figure class="work work--placeholder">
+          <div class="frame"><canvas class="painting" data-seed="{{ q[1] | times: 97 }}" data-palette="{{ q[0] }}" data-scene="landscape" style="aspect-ratio: {{ q[2] }}" aria-hidden="true"></canvas></div>
+          <figcaption><span class="work__title">Your artwork here</span><span class="work__medium">add it to _data/artworks.yml</span></figcaption>
+        </figure>
+        {% endfor %}
+      {% endif %}
+    </section>
+  </main>
+
+  <footer class="art-footer">
+    <p>The header is painted live in your browser: thousands of short brushstrokes, after Vincent van Gogh's <em>Snow-Covered Field with a Harrow</em> (1890).</p>
+    <p><a href="{{ '/' | relative_url }}">Back to homepage</a></p>
+  </footer>
+
+  <div class="lightbox" id="lightbox" hidden>
+    <button class="lightbox__close" type="button" aria-label="Close">&times;</button>
+    <img alt="">
+    <p class="lightbox__caption"></p>
+  </div>
+
+  <script src="{{ '/assets/js/brushstrokes.js' | relative_url }}"></script>
+</body>
+</html>

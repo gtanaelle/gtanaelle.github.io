@@ -1,0 +1,34 @@
+{% comment %}
+  Publications are generated from two places:
+    _posts/         papers with a blog post (the title and [blog] link go to the post)
+    _publications/  papers without a blog post (the title links to the paper; no page is generated)
+  Front matter fields: title, authors, venue, note, type (conference | journal | preprint | patent), paper, code
+  Files in _publications/ also need a `date:` field, used for sorting.
+{% endcomment %}
+{% assign all_pubs = site.posts | concat: site.publications | sort: "date" | reverse %}
+{% assign groups = "conference:Conference Publications,journal:Journal Publications,preprint:Preprints,patent:Patents" | split: "," %}
+{% for g in groups %}
+  {% assign parts = g | split: ":" %}
+  {% assign pubs = all_pubs | where: "type", parts[0] %}
+  {% if pubs.size > 0 %}
+  <h2 class="pub-group">{{ parts[1] }}</h2>
+  <ul class="pub-list">
+    {% for pub in pubs %}
+    {% assign has_blog = false %}{% if pub.collection == "posts" %}{% assign has_blog = true %}{% endif %}
+    {% if pub.type == "patent" %}
+    <li><span class="pub-title">{{ pub.title }}</span>. <span class="pub-venue">{{ pub.venue }}</span> ({{ pub.date | date: "%b %Y" }})</li>
+    {% continue %}
+    {% endif %}
+    <li>
+      {% if has_blog %}<a class="pub-title" href="{{ pub.url | relative_url }}">{{ pub.title }}</a>
+      {% elsif pub.paper %}<a class="pub-title" href="{{ pub.paper }}" target="_blank">{{ pub.title }}</a>
+      {% else %}<span class="pub-title">{{ pub.title }}</span>{% endif %}
+      {% if pub.paper %}<a href="{{ pub.paper }}" target="_blank">[paper]</a>{% endif %}
+      {% if pub.code %}<a href="{{ pub.code }}" target="_blank">[code]</a>{% endif %}
+      {% if has_blog %}<a href="{{ pub.url | relative_url }}">[blog]</a>{% endif %}
+      <br>{{ pub.authors | markdownify | remove: '<p>' | remove: '</p>' | strip }}. <span class="pub-venue">{{ pub.venue }}</span>{% if pub.note %} <span class="pub-note">({{ pub.note }})</span>{% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+{% endfor %}

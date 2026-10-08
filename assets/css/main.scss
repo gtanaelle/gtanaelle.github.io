@@ -1,0 +1,270 @@
+---
+---
+
+/*
+ *    Minimal Mistakes Jekyll Theme
+ *
+ *  - Michael Rose
+ *  - mademistakes.com
+ *  - https://twitter.com/mmistakes
+ *
+*/
+
+@import "vendor/breakpoint/breakpoint"; // media query mixins
+@import "variables";
+@import "mixins";
+@import "vendor/susy/susy";
+
+@import "reset";
+@import "base";
+
+@import "utilities";
+@import "animations";
+@import "tables";
+@import "buttons";
+@import "notices";
+@import "masthead";
+@import "navigation";
+@import "footer";
+@import "syntax";
+
+@import "forms";
+
+@import "page";
+@import "archive";
+@import "sidebar";
+
+@import "vendor/font-awesome/fontawesome";
+@import "vendor/font-awesome/solid";
+@import "vendor/font-awesome/brands";
+@import "vendor/magnific-popup/magnific-popup";
+@import "print";
+
+.paper-box {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    border-bottom: 1px #efefef solid;
+    padding: 2em 0 2em 0;
+    
+
+    .paper-box-image{
+        justify-content: center;
+        display: flex;
+        width: 100%;
+        order: 2;
+        img {
+            max-width: 400px;
+            box-shadow: 3px 3px 6px #888;
+            object-fit: cover;
+        }
+    }
+    
+    .paper-box-text{
+        max-width: 100%;
+        order: 1;
+    }
+    
+    @include breakpoint($medium) {
+        .paper-box-image{
+            justify-content: left;
+            min-width: 200px;
+            max-width: 40%;
+            order: 1;
+        }
+        
+        .paper-box-text{
+            justify-content: left;
+            padding-left: 2em;
+            max-width: 60%;
+            order: 2;
+        }
+
+    }
+
+
+}
+
+$scroll_offset : 2em;
+h1:before, .anchor:before { 
+    content: ''; 
+    display: block; 
+    position: relative; 
+    width: 0; 
+    height: $scroll_offset; 
+    margin-top: -$scroll_offset;
+}
+
+.badge {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    position: absolute;
+    margin-top: .5em;
+    margin-left: -.5em;
+    color: white;
+    background-color: #00369f;
+    font-size: .8em;
+}
+/* ---------- Publications ---------- */
+.page__content h2.pub-group { font-size: 1.05em; margin: 1.2em 0 0.5em; padding-bottom: 0; border-bottom: none; }
+.pub-list { list-style: none; margin: 0 0 1em; padding: 0; }
+.pub-list li { margin: 0 0 1em; line-height: 1.6; }
+.pub-title { font-weight: 600; margin-right: 0.2em; }
+.pub-note { color: #c0392b; }
+
+/* ---------- Blog post (one per publication) ---------- */
+.post__back { font-size: 0.9em; margin-bottom: 0.3em; }
+.page__content .post__title { font-size: 1.7em; margin-top: 0; padding-bottom: 0; border-bottom: none; }
+.post__authors { margin: 0.3em 0 0; }
+.post__meta { color: #666; font-size: 0.9em; margin-top: 0.2em; }
+.post__links { margin: 0.5em 0 1.5em; }
+.post__links .btn-link { display: inline-block; margin-right: 0.5em; padding: 0.25em 0.8em; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9em; text-decoration: none; }
+.post__links .btn-link:hover { background: #f5f5f5; }
+.post__pager { display: flex; justify-content: space-between; gap: 1em; margin-top: 3em; padding-top: 1em; border-top: 1px solid #eee; font-size: 0.9em; }
+.post div.highlighter-rouge .highlight { font-size: 0.9em; line-height: 1.6; }
+
+/* ---------- Artwork link in the top bar ---------- */
+.masthead__menu-item--art a {
+  font-family: "Cormorant Garamond", Garamond, Georgia, serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 1.15em;
+  letter-spacing: 0.02em;
+  color: #2f7a5f !important;
+}
+.masthead__menu-item--art a:hover { color: #1f5a45 !important; }
+.greedy-nav .visible-links .masthead__menu-item--art a:before { background: #8fc0b4; }
+
+/* ==========================================================================
+   Ting's look: canvas paper, celadon green, serif headings, painted strokes
+   ========================================================================== */
+$tg-ink: #1f3b3a;
+$tg-ink-soft: #5d7471;
+$tg-green: #2f7a5f;
+$tg-green-dark: #1f5a45;
+$tg-celadon: #8fc0b4;
+$tg-butter: #ece3a2;
+$tg-mat: #fdfcf6;
+$tg-line: #e3ddca;
+$tg-serif: "Cormorant Garamond", Garamond, Georgia, serif;
+
+body {
+  background-color: $background-color;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.35  0 0 0 0 0.38  0 0 0 0 0.30  0 0 0 0.05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+a { text-underline-offset: 3px; text-decoration-color: rgba(47, 122, 95, 0.35); }
+a:hover { color: $tg-green-dark; text-decoration-color: $tg-butter; }
+
+/* Top bar */
+.masthead {
+  background-color: rgba(247, 245, 236, 0.94);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid $tg-line;
+}
+.greedy-nav { background: transparent; }
+.greedy-nav a { color: $tg-ink-soft; }
+.greedy-nav a:hover { color: $tg-ink; }
+.greedy-nav .visible-links a:before { background: $tg-celadon; height: 3px; border-radius: 2px; }
+.greedy-nav button { background-color: $tg-green; border-radius: 4px; }
+.greedy-nav .hidden-links { background: $tg-mat; border-color: $tg-line; }
+.masthead__menu-item a.wordmark {
+  font-family: $tg-serif;
+  font-weight: 700;
+  font-size: 1.45em;
+  letter-spacing: 0.01em;
+  color: $tg-ink;
+}
+
+/* Painted banner on the homepage */
+.home-banner {
+  position: relative;
+  height: 120px;
+  overflow: hidden;
+  border-bottom: 1px solid $tg-line;
+  background: #e4e7c8;
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  @include breakpoint($large) { height: 150px; }
+}
+
+/* Sidebar */
+.author__avatar img {
+  padding: 8px !important;
+  background: $tg-mat;
+  border: 1px solid $tg-line !important;
+  border-radius: 2px !important;
+  box-shadow: 0 8px 22px rgba(31, 59, 58, 0.12);
+}
+.author__content .author__name {
+  font-family: $tg-serif !important;
+  font-weight: 700;
+  font-size: 1.7em;
+  color: $tg-ink;
+}
+.author__bio { color: $tg-ink-soft; }
+.author__urls { color: $tg-ink-soft; }
+.author__urls a { color: $tg-ink-soft; }
+.author__urls a:hover { color: $tg-green; }
+.author__urls i, .author__urls .fa-linkedin { color: $tg-green !important; }
+
+/* Section headings with a painted stroke */
+.page__content h1 {
+  font-family: $tg-serif;
+  font-weight: 700;
+  font-size: 2em;
+  letter-spacing: 0.005em;
+  color: $tg-ink;
+  border-bottom: none;
+  padding-bottom: 0.15em;
+  margin-top: 1.4em;
+  &::after {
+    content: "";
+    display: block;
+    width: 110px;
+    height: 12px;
+    margin-top: 0.15em;
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 14'><path d='M3 9 C 25 3, 45 12, 62 7 S 100 3, 117 8' fill='none' stroke='%238fc0b4' stroke-width='4' stroke-linecap='round'/><path d='M10 10 C 35 6, 60 11, 85 7' fill='none' stroke='%23ece3a2' stroke-width='2.5' stroke-linecap='round'/></svg>") left center / contain no-repeat;
+  }
+}
+.page__content h2.pub-group {
+  font-family: $tg-serif;
+  font-weight: 600;
+  font-style: italic;
+  font-size: 1.3em;
+  color: $tg-ink-soft;
+}
+
+/* Dated lists (News, Educations, Honors): date as a green marker */
+.page__content h1 + ul {
+  list-style: none;
+  padding-left: 0;
+  margin-left: 0;
+  li { margin-bottom: 0.45em; }
+  li > em:first-child {
+    font-style: normal;
+    font-weight: 600;
+    color: $tg-green;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Publications: venue in italics after the authors */
+.pub-list .pub-venue { font-style: italic; color: $tg-ink-soft; }
+
+.pub-title { color: $tg-ink; }
+.pub-title:hover { color: $tg-green; }
+.profile_box a i { color: $tg-green !important; }
+.profile_box a:hover i { color: $tg-green-dark !important; }
+
+.author__names-alt {
+  margin: 0.15em 0 0.2em;
+  font-family: $tg-serif;
+  font-size: 1.15em;
+  color: $tg-ink-soft;
+  letter-spacing: 0.02em;
+  .zh { font-family: "Songti SC", "STSong", "Noto Serif SC", "Source Han Serif SC", serif; }
+}
+
+.page__content h1 + ul li { line-height: 1.55; }

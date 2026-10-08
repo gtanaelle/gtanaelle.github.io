@@ -1,0 +1,36 @@
+# Artworks shown on the /art/ page, in this order.
+# Put image files in images/art/ (around 1600px on the long side is plenty).
+# While this list is empty, the page shows painted placeholders instead.
+#
+# - title: "Fields at Dusk"
+#   year: 2025
+#   medium: "Oil on canvas, 40 × 50 cm"
+#   image: /images/art/fields-at-dusk.jpg
+#   note: "Painted after a walk outside Delft"   # optional
+
+- title: "Irises"
+  year: 2024
+  medium: "Oil on canvas"
+  note: "After Vincent van Gogh"
+  image: /images/art/irises.jpg
+
+- title: "Vue d’Auvers-sur-Oise"
+  year: 2024
+  medium: "Oil on canvas"
+  note: "After Vincent van Gogh"
+  image: /images/art/village.jpg
+
+- title: "Garden at Dusk"
+  year: 2024
+  medium: "Oil on canvas"
+  image: /images/art/garden.jpg
+
+- title: "Rabbit"
+  year: 2023
+  medium: "Digital painting, Art Set on iPad"
+  image: /images/art/rabbit.jpg
+
+- title: "仕女图 · Court Lady"
+  year: 2023
+  medium: "Digital painting, Procreate on iPad"
+  image: /images/art/court-lady.jpg

@@ -1,0 +1,26 @@
+---
+layout: default
+---
+
+<div class="post">
+  <p class="post__back"><a href="{{ '/#publications' | relative_url }}">&larr; Publications</a></p>
+  <h1 class="post__title">{{ page.title }}</h1>
+  {% if page.authors %}<p class="post__authors">{{ page.authors | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>{% endif %}
+  <p class="post__meta">
+    {% if page.venue %}<strong>{{ page.venue }}</strong>{% if page.note %} ({{ page.note }}){% endif %} &middot; {% endif %}
+    <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %-d, %Y" }}</time>
+  </p>
+  {% if page.paper or page.code %}
+  <p class="post__links">
+    {% if page.paper %}<a class="btn-link" href="{{ page.paper }}" target="_blank">📄 Paper</a>{% endif %}
+    {% if page.code %}<a class="btn-link" href="{{ page.code }}" target="_blank">💻 Code</a>{% endif %}
+  </p>
+  {% endif %}
+
+  {{ content }}
+
+  <nav class="post__pager">
+    {% if page.previous %}<a href="{{ page.previous.url | relative_url }}">&larr; {{ page.previous.title }}</a>{% else %}<span></span>{% endif %}
+    {% if page.next %}<a href="{{ page.next.url | relative_url }}">{{ page.next.title }} &rarr;</a>{% endif %}
+  </nav>
+</div>

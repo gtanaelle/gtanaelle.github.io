@@ -1,0 +1,40 @@
+---
+layout: compress
+---
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+  </head>
+
+  <body>
+
+    {% include browser-upgrade.html %}
+    {% include masthead.html %}
+
+    {% if page.url == "/" %}
+    <div class="home-banner" aria-hidden="true">
+      <canvas class="painting" data-seed="1890" data-palette="harrow" data-scene="landscape"></canvas>
+    </div>
+    {% endif %}
+
+    <div id="main" role="main">
+      {% include sidebar.html %}
+    
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section class="page__content" itemprop="text">
+            {{ content }}
+          </section>
+        </div>
+      </article>
+    </div>
+
+    {% include scripts.html %}
+    {% if page.url == "/" %}<script src="/assets/js/brushstrokes.js"></script>{% endif %}
+
+  </body>
+</html>
