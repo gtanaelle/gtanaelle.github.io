@@ -16,8 +16,6 @@ My PhD started with solving real-world transport problems where data were noisy,
 
 But every new problem meant designing a new abstraction by hand. That pushed me toward a different question: can a model learn the right abstraction for a whole class of problems, instead of having it designed in for each one? Answering it took my work in a more theoretical direction, toward reinforcement learning, including work combining flow matching with policy optimization (NeurIPS 2026). At NAVER LABS Europe, I work with [Jean-Marc Andreoli](https://europe.naverlabs.com/people_user/jean-marc-andreoli/) and [Jean-Michel Renders](https://europe.naverlabs.com/people_user/jean-michel-renders/) on online stochastic combinatorial optimization, studying how to transfer what planning can do into reactive policies that act in real time.
 
-Outside research, I enjoy making art. You can find some of my artwork [here](/art/).
-
 **Research interests:** reinforcement learning, planning, generative models, combinatorial optimization, and graph learning
 
 # News
@@ -52,3 +50,7 @@ Outside research, I enjoy making art. You can find some of my artwork [here](/ar
 - *2020* Outstanding Graduate of Beihang University.
 - *2019* Chinese National Scholarship (top 0.2% nationwide).
 - *2018* Chinese National Scholarship (top 0.2% nationwide).
+
+# Miscellany
+- **Languages:** Chinese (native), French (C2), English (C1).
+- **Art:** Outside research, I enjoy making art. You can find some of my artwork [here](/art/).
