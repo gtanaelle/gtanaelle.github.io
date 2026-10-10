@@ -268,3 +268,10 @@ a:hover { color: $tg-green-dark; text-decoration-color: $tg-butter; }
 }
 
 .page__content h1 + ul li { line-height: 1.55; }
+
+/* Justified intro paragraphs on the homepage */
+.page__content > p {
+  text-align: justify;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
