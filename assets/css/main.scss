@@ -125,6 +125,133 @@ h1:before, .anchor:before {
 .post__pager { display: flex; justify-content: space-between; gap: 1em; margin-top: 3em; padding-top: 1em; border-top: 1px solid #eee; font-size: 0.9em; }
 .post div.highlighter-rouge .highlight { font-size: 0.9em; line-height: 1.6; }
 
+/* Section divider in posts: a thin line above every h2 */
+.post h2 {
+  margin-top: 0.6em;
+  padding-top: 0;
+  border-bottom: none;
+  &::before {
+    content: "";
+    display: block;
+    height: 1px;
+    margin: 2.6em 0 1.6em;
+    background: #e3ddca;
+  }
+}
+
+/* Post reading type, after Medium: 20px serif body (18px on phones), ~1.6 line height, a full line between paragraphs.
+   Sizes are in px so the column width (set in em on .page) does not grow with the text. UI bits stay in the sans. */
+$post-serif: "Source Serif 4", "Source Serif Pro", Georgia, Cambria, "Times New Roman", serif;
+.post {
+  font-size: 20px;
+  > p:not([class]), > ul, > ol, .post__summary p {
+    font-family: $post-serif;
+    font-size: 20px;
+    line-height: 1.6;
+    letter-spacing: -0.003em;
+    color: #242424;
+  }
+  > p:not([class]), > ul, > ol { margin: 0 0 1.45em; }
+  > ul li, > ol li { margin-bottom: 0.55em; }
+  > ul, > ol { padding-left: 1.4em; }
+  h2 { font-size: 26px; line-height: 1.25; font-weight: 700; color: #1f3b3a; margin-bottom: 0.55em; }
+  .post__title { font-size: 40px; line-height: 1.15; }
+  .post__authors, .post__meta, .post__back { font-size: 15px; }
+  .post__links .btn-link { font-size: 14px; }
+  figcaption, .fig__label { font-size: 14px; line-height: 1.5; }
+  .viz { font-size: 16px; }
+  mjx-container { font-size: 105% !important; }
+  div.highlighter-rouge .highlight { font-size: 14px; }
+}
+@media (max-width: 36em) {
+  .post {
+    font-size: 18px;
+    > p:not([class]), > ul, > ol, .post__summary p { font-size: 18px; }
+    h2 { font-size: 22px; }
+    .post__title { font-size: 30px; }
+  }
+}
+.post .fig__videos { display: flex; flex-wrap: wrap; gap: 1em; margin: 0 0 2.2em; }
+.post .fig__videos figure { display: block; flex: 1 1 260px; margin: 0; }
+.post .fig__videos video { display: block; width: 100%; height: auto; border-radius: 4px; }
+.post .fig__videos figcaption { color: #5d7471; margin-top: 0.5em; }
+
+/* Summary box at the top of a post: tinted panel with a green rule on the left */
+.post__summary {
+  margin: 1.4em 0 1.8em;
+  padding: 1em 1.3em;
+  background: rgba(143, 192, 180, 0.16);
+  border-left: 3px solid #2f7a5f;
+  border-radius: 0 6px 6px 0;
+  color: #1f3b3a;
+  p { margin: 0; text-align: justify; -webkit-hyphens: auto; hyphens: auto; }
+  p + p { margin-top: 0.7em; }
+}
+
+/* Interactive charts in posts (_includes/fmer-*-chart.html): FMER in green, baselines in grey */
+.post .viz {
+  --ink: #1f3b3a; --ink-soft: #5d7471; --muted: #8a9693; --grid: #e3ddca; --surface: #f7f5ec;
+  --fmer: #2f7a5f; --base: #a3aeab;
+  .viz__title { font-weight: 600; color: var(--ink); margin: 0 0 0.2em; font-size: 0.98em; }
+  .viz__sub { color: var(--ink-soft); font-size: 0.85em; margin: 0 0 0.6em; }
+  .viz__legend { display: flex; flex-wrap: wrap; gap: 0.4em 1.2em; font-size: 0.85em; color: var(--ink-soft); margin-bottom: 0.3em; }
+  .viz__legend span::before { content: ""; display: inline-block; width: 14px; height: 3px; border-radius: 2px; margin-right: 6px; vertical-align: middle; background: var(--c); }
+  .viz__legend--bars span::before { width: 11px; height: 11px; border-radius: 2px; }
+  .viz__plot { position: relative; }
+  svg { width: 100%; height: auto; display: block; overflow: visible; }
+  svg text { font-size: 12px; fill: var(--ink-soft); }
+  .viz__tip { position: absolute; z-index: 2; pointer-events: none; background: #fffef9; border: 1px solid var(--grid); border-radius: 4px;
+    box-shadow: 0 4px 14px rgba(31, 59, 58, 0.12); padding: 0.45em 0.65em; font-size: 0.8em; color: var(--ink); line-height: 1.45;
+    opacity: 0; transition: opacity 0.12s; white-space: nowrap; }
+  .viz__tip b { font-weight: 600; }
+  .viz__tip i { display: inline-block; width: 10px; height: 3px; border-radius: 2px; margin-right: 5px; vertical-align: middle; font-style: normal; }
+  details { font-size: 0.85em; color: var(--ink-soft); margin-top: 0.4em; }
+  summary { cursor: pointer; }
+  table { font-size: 0.95em; margin-top: 0.5em; }
+  td, th { padding: 0.25em 0.6em; text-align: right; }
+  td:first-child, th:first-child { text-align: left; }
+}
+.post .viz__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2em 2em; }
+@media (max-width: 36em) {
+  .post .viz__grid { grid-template-columns: 1fr; }
+}
+.post .viz__panel-title { font-size: 0.85em; font-weight: 600; color: #1f3b3a; margin: 0 0 0.2em; }
+
+/* Display equations wider than the column scroll on their own instead of widening the page (phones) */
+.post mjx-container[display="true"] { display: block; max-width: 100%; overflow-x: auto; overflow-y: hidden; padding: 0.2em 0; }
+
+/* Figures in posts: image with a muted caption */
+.post figure.fig, .post figure.viz { display: block; margin: 1.8em 0; }
+.post figure.fig img { display: block; width: 100%; height: auto; margin: 0 auto; }
+.post .fig__panels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.9em; max-width: 34em; margin: 0 auto; }
+.post .fig__panels img { margin: 0; border-radius: 3px; }
+.post .fig__label { margin: 0 0 0.35em; font-size: 0.85em; color: #5d7471; text-align: center; }
+.post .fig__label strong { color: #1f3b3a; margin-right: 0.3em; }
+@media (max-width: 30em) {
+  .post .fig__panels { grid-template-columns: 1fr; max-width: 18em; margin: 0 auto; }
+}
+.post figcaption { font-family: inherit; }
+.post figure.fig figcaption { font-size: 0.85em; color: #5d7471; line-height: 1.5; margin-top: 0.6em; }
+
+/* Opt out of the divider on a heading with `{: .no-divider}` after it in the markdown */
+.post h2.no-divider {
+  margin-top: 2em;
+  &::before { display: none; }
+}
+
+/* Pages without the author sidebar (blog posts): one centred column at reading width */
+.page--no-sidebar {
+  @include breakpoint($large) {
+    float: none;
+    width: auto;
+    max-width: 46em;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
 /* ---------- Artwork link in the top bar ---------- */
 .masthead__menu-item--art a {
   font-family: "Cormorant Garamond", Garamond, Georgia, serif;
@@ -269,9 +396,25 @@ a:hover { color: $tg-green-dark; text-decoration-color: $tg-butter; }
 
 .page__content h1 + ul li { line-height: 1.55; }
 
-/* Justified intro paragraphs on the homepage */
-.page__content > p {
+/* Justified intro paragraphs on the homepage, and body text in posts (not the title/meta lines) */
+.page__content > p,
+.post > p:not([class]),
+.post > ul > li,
+.post > ol > li {
   text-align: justify;
   -webkit-hyphens: auto;
   hyphens: auto;
 }
+
+/* Homepage and other sidebar pages: larger reading type and more air (posts set their own sizes above).
+   px so the theme's em-based layout widths stay as they are. */
+.page:not(.page--no-sidebar) .page__content {
+  font-size: 17px;
+  > p { line-height: 1.7; margin: 0 0 1.1em; }
+  h1 { font-size: 36px; margin-top: 1.6em; margin-bottom: 0.6em; }
+  h2.pub-group { font-size: 21px; margin: 1.5em 0 0.7em; }
+  h1 + ul li { line-height: 1.65; margin-bottom: 0.7em; }
+  .pub-list li { line-height: 1.65; margin-bottom: 1.3em; }
+}
+.sidebar .author__bio, .sidebar .author__urls { font-size: 15px; }
+.sidebar .author__urls li { margin-bottom: 0.4em; }

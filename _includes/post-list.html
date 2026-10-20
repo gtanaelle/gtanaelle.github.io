@@ -1,0 +1,12 @@
+<ul class="post-list">
+{% assign n = include.limit | default: 1000 %}
+{% for post in include.posts limit: n %}
+  <li>
+    <span class="post-list__date">{{ post.date | date: "%Y.%m.%d" }}</span>
+    <div>
+      <a class="post-list__title" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+      {% if post.description %}<div class="post-list__desc">{{ post.description }}</div>{% endif %}
+    </div>
+  </li>
+{% endfor %}
+</ul>

@@ -1,0 +1,110 @@
+<!-- MuJoCo-v5 final returns (paper Table 2). One small bar chart per environment, each on its own scale. Hover or tap a bar for mean and std. -->
+<figure class="viz" id="mujoco-viz">
+  <p class="viz__title">MuJoCo-v5: episode return</p>
+  <p class="viz__sub">Mean over 5 seeds, sorted within each environment. Scales differ per environment, so compare ranks, not bar lengths across panels.</p>
+  <div class="viz__legend viz__legend--bars">
+    <span style="--c: var(--fmer)">FMER</span>
+    <span style="--c: var(--base)">Baselines</span>
+  </div>
+  <div class="viz__plot">
+    <div class="viz__grid"></div>
+    <div class="viz__tip" role="status"></div>
+  </div>
+  <details>
+    <summary>Show as a table</summary>
+    <table>
+      <thead><tr><th>Method</th><th>Hopper</th><th>HalfCheetah</th><th>Walker2d</th><th>Humanoid</th></tr></thead>
+      <tbody>
+        <tr><td>PPO</td><td>1198 ± 361</td><td>5983 ± 811</td><td>4598 ± 222</td><td>812 ± 78</td></tr>
+        <tr><td>SAC</td><td>3319 ± 133</td><td>10295 ± 1170</td><td>4442 ± 537</td><td><b>5327 ± 59</b></td></tr>
+        <tr><td>TD3</td><td><b>3662 ± 62</b></td><td>9497 ± 901</td><td>4888 ± 631</td><td>318 ± 208</td></tr>
+        <tr><td>DIPO</td><td>3409 ± 297</td><td>9516 ± 1417</td><td>5029 ± 217</td><td>5087 ± 100</td></tr>
+        <tr><td>DPMD</td><td>3398 ± 278</td><td>10706 ± 818</td><td>4901 ± 352</td><td>5085 ± 28</td></tr>
+        <tr><td>QVPO</td><td>3423 ± 413</td><td>10310 ± 1398</td><td>4846 ± 398</td><td>5064 ± 49</td></tr>
+        <tr><td>SAC-Flow</td><td>2931 ± 510</td><td>9933 ± 255</td><td>5234 ± 729</td><td>4857 ± 2763</td></tr>
+        <tr><td>FLAME</td><td>2594 ± 432</td><td>10901 ± 1478</td><td>4407 ± 144</td><td>5207 ± 346</td></tr>
+        <tr><td><b>FMER</b></td><td>2913 ± 643</td><td><b>12332 ± 904</b></td><td><b>5283 ± 438</b></td><td>5286 ± 65</td></tr>
+      </tbody>
+    </table>
+  </details>
+  <script>
+  (function () {
+    var root = document.getElementById("mujoco-viz");
+    var grid = root.querySelector(".viz__grid"), tip = root.querySelector(".viz__tip"), plot = root.querySelector(".viz__plot");
+    var NS = "http://www.w3.org/2000/svg";
+    var methods = ["PPO", "SAC", "TD3", "DIPO", "DPMD", "QVPO", "SAC-Flow", "FLAME", "FMER"];
+    var envs = [
+      { name: "HalfCheetah", v: [5982.74, 10295.33, 9496.59, 9516.47, 10706.06, 10309.60, 9933.18, 10900.69, 12332.38],
+        sd: [810.60, 1170.43, 901.14, 1417.20, 817.59, 1398.37, 254.50, 1478.33, 903.67] },
+      { name: "Walker2d", v: [4598.21, 4441.51, 4887.65, 5028.66, 4901.24, 4846.39, 5233.78, 4407.20, 5282.89],
+        sd: [222.17, 536.85, 630.96, 217.36, 351.59, 397.71, 728.87, 143.72, 437.57] },
+      { name: "Humanoid", v: [811.94, 5326.73, 318.33, 5087.46, 5084.60, 5064.21, 4857.14, 5207.44, 5286.12],
+        sd: [78.20, 58.93, 208.02, 100.04, 27.90, 48.82, 2763.20, 345.98, 65.35] },
+      { name: "Hopper", v: [1198.02, 3318.64, 3662.14, 3408.50, 3397.57, 3422.73, 2930.95, 2593.95, 2913.45],
+        sd: [360.64, 132.80, 61.58, 297.31, 278.06, 413.41, 510.33, 432.33, 642.67] }
+    ];
+    var css = getComputedStyle(root);
+    var c = function (n) { return css.getPropertyValue(n).trim(); };
+    var fmt = function (v) { return Math.round(v).toLocaleString("en-US"); };
+    function el(tag, attrs, parent) {
+      var e = document.createElementNS(NS, tag);
+      for (var k in attrs) e.setAttribute(k, attrs[k]);
+      parent.appendChild(e); return e;
+    }
+    function niceMax(v) {
+      var p = Math.pow(10, Math.floor(Math.log10(v))), n = v / p;
+      var step = (n <= 1.5 ? 0.5 : n <= 3 ? 1 : n <= 6 ? 2 : 5) * p;
+      return { max: Math.ceil(v / step) * step, step: step };
+    }
+    /* Bar with a 4px rounded end on the data side, square at the baseline. */
+    function barPath(x0, y, w, h, r) {
+      r = Math.min(r, w, h / 2);
+      return "M" + x0 + "," + y + "H" + (x0 + w - r) + "Q" + (x0 + w) + "," + y + " " + (x0 + w) + "," + (y + r) +
+        "V" + (y + h - r) + "Q" + (x0 + w) + "," + (y + h) + " " + (x0 + w - r) + "," + (y + h) + "H" + x0 + "Z";
+    }
+    var W = 300, rowH = 20, barH = 14, m = { l: 62, r: 44, t: 4, b: 22 };
+    var H = m.t + methods.length * rowH + m.b, pw = W - m.l - m.r;
+    envs.forEach(function (env) {
+      var panel = document.createElement("div");
+      var title = document.createElement("p"); title.className = "viz__panel-title"; title.textContent = env.name;
+      panel.appendChild(title);
+      var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img",
+        "aria-label": env.name + " episode return: " + methods.map(function (mname, i) { return mname + " " + fmt(env.v[i]); }).join(", ") }, panel);
+      grid.appendChild(panel);
+      var nm = niceMax(Math.max.apply(null, env.v));
+      var x = function (v) { return m.l + pw * v / nm.max; };
+      for (var t = 0; t <= nm.max + 1e-9; t += nm.step) {
+        el("line", { x1: x(t), x2: x(t), y1: m.t, y2: H - m.b, stroke: c("--grid"), "stroke-width": 1 }, svg);
+        el("text", { x: x(t), y: H - 6, "text-anchor": "middle" }, svg).textContent = t >= 1000 ? (t / 1000) + "k" : t;
+      }
+      var order = methods.map(function (_, i) { return i; }).sort(function (a, b) { return env.v[b] - env.v[a]; });
+      order.forEach(function (i, rank) {
+        var y = m.t + rank * rowH + (rowH - barH) / 2, hi = methods[i] === "FMER";
+        var lab = el("text", { x: m.l - 6, y: y + barH / 2 + 4, "text-anchor": "end" }, svg);
+        lab.textContent = methods[i];
+        if (hi) { lab.style.fill = c("--ink"); lab.style.fontWeight = 600; }
+        el("path", { d: barPath(m.l, y, Math.max(x(env.v[i]) - m.l, 1), barH, 4), fill: hi ? c("--fmer") : c("--base") }, svg);
+        if (hi) {
+          var val = el("text", { x: x(env.v[i]) + 5, y: y + barH / 2 + 4 }, svg);
+          val.textContent = fmt(env.v[i]); val.style.fill = c("--ink"); val.style.fontWeight = 600;
+        }
+        var hit = el("rect", { x: 0, y: m.t + rank * rowH, width: W, height: rowH, fill: "transparent" }, svg);
+        function show() {
+          tip.innerHTML = "<b>" + env.name + "</b><br>" + '<i style="background:' + (hi ? c("--fmer") : c("--base")) + '"></i>' +
+            (hi ? "<b>" : "") + methods[i] + ": " + fmt(env.v[i]) + (hi ? "</b>" : "") +
+            ' <span style="color:' + c("--muted") + '">± ' + fmt(env.sd[i]) + "</span><br>" +
+            '<span style="color:' + c("--muted") + '">rank ' + (rank + 1) + " of " + methods.length + "</span>";
+          var pb = plot.getBoundingClientRect(), sb = svg.getBoundingClientRect(), k = sb.width / W;
+          var left = sb.left - pb.left + x(env.v[i]) * k + 10, top = sb.top - pb.top + (m.t + rank * rowH) * k - 4;
+          tip.style.opacity = 1;
+          if (left + tip.offsetWidth > pb.width) left = pb.width - tip.offsetWidth;
+          tip.style.left = Math.max(0, left) + "px"; tip.style.top = top + "px";
+        }
+        hit.addEventListener("pointerenter", show);
+        hit.addEventListener("pointerdown", show);
+        hit.addEventListener("pointerleave", function () { tip.style.opacity = 0; });
+      });
+    });
+  })();
+  </script>
+</figure>
