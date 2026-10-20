@@ -8,7 +8,11 @@
   {% assign canonical_url = page.url | replace: "index.html", "" | prepend: site.url %}
 {% endif %}
 
-<title>{{ site.title }} | TU Delft</title>
+{% if page.url == "/" or page.title == nil %}
+<title>{{ site.title }} | Homepage</title>
+{% else %}
+<title>{{ page.title | strip_html | escape_once }} | {{ site.title }}</title>
+{% endif %}
 
 {% assign seo_description = page.description | default: page.excerpt | default: site.description %}
 {% if seo_description %}
