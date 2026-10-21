@@ -2,7 +2,7 @@
   Publications are generated from two places:
     _posts/         papers with a blog post (the title and [blog] link go to the post)
     _publications/  papers without a blog post (the title links to the paper; no page is generated)
-  Front matter fields: title, authors, venue, note, type (conference | journal | preprint | patent), paper, code
+  Front matter fields: title, authors, venue, note, type (conference | journal | preprint | patent), paper, code, poster
   Files in _publications/ also need a `date:` field, used for sorting.
 {% endcomment %}
 {% assign all_pubs = site.posts | concat: site.publications | sort: "date" | reverse %}
@@ -26,6 +26,7 @@
       {% if pub.paper %}<a href="{{ pub.paper }}" target="_blank">[paper]</a>{% endif %}
       {% if pub.code %}<a href="{{ pub.code }}" target="_blank">[code]</a>{% endif %}
       {% if has_blog %}<a href="{{ pub.url | relative_url }}">[blog]</a>{% endif %}
+      {% if pub.poster %}<a href="{{ pub.poster | relative_url }}" target="_blank">[poster]</a>{% endif %}
       <br>{{ pub.authors | markdownify | remove: '<p>' | remove: '</p>' | strip }}. <span class="pub-venue">{{ pub.venue }}</span>{% if pub.note %} <span class="pub-note">({{ pub.note }})</span>{% endif %}
     </li>
     {% endfor %}

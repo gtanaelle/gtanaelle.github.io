@@ -6,6 +6,7 @@ venue: "NeurIPS 2026"
 type: conference
 paper: https://arxiv.org/abs/2603.17685
 code: https://github.com/gtanaelle/FMER
+poster: /files/posters/fmer-neurips-2026-poster.pdf
 redirect_from:
   - /blog/2026/09/20/flow-matching-policy-optimization/
 ---

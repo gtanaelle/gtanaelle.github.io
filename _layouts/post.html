@@ -10,10 +10,11 @@ layout: default
     {% if page.venue %}<strong>{{ page.venue }}</strong>{% if page.note %} ({{ page.note }}){% endif %} &middot; {% endif %}
     <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %-d, %Y" }}</time>
   </p>
-  {% if page.paper or page.code %}
+  {% if page.paper or page.code or page.poster %}
   <p class="post__links">
     {% if page.paper %}<a class="btn-link" href="{{ page.paper }}" target="_blank">📄 Paper</a>{% endif %}
     {% if page.code %}<a class="btn-link" href="{{ page.code }}" target="_blank">💻 Code</a>{% endif %}
+    {% if page.poster %}<a class="btn-link" href="{{ page.poster | relative_url }}" target="_blank">🖼️ Poster</a>{% endif %}
   </p>
   {% endif %}
 
