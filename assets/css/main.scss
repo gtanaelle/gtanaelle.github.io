@@ -171,8 +171,8 @@ $post-serif: "Source Serif 4", "Source Serif Pro", Georgia, Cambria, "Times New 
     .post__title { font-size: 30px; }
   }
 }
-.post .fig__videos { display: flex; flex-wrap: wrap; gap: 1em; margin: 0 0 2.2em; }
-.post .fig__videos figure { display: block; flex: 1 1 260px; margin: 0; }
+.post .fig__videos { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; margin: 0 0 2.2em; }
+.post .fig__videos figure { display: block; margin: 0; min-width: 0; }
 .post .fig__videos video { display: block; width: 100%; height: auto; border-radius: 4px; }
 .post .fig__videos figcaption { color: #5d7471; margin-top: 0.5em; }
 
@@ -228,7 +228,9 @@ $post-serif: "Source Serif 4", "Source Serif Pro", Georgia, Cambria, "Times New 
 .post .fig__label { margin: 0 0 0.35em; font-size: 0.85em; color: #5d7471; text-align: center; }
 .post .fig__label strong { color: #1f3b3a; margin-right: 0.3em; }
 @media (max-width: 30em) {
-  .post .fig__panels { grid-template-columns: 1fr; max-width: 18em; margin: 0 auto; }
+  .post .fig__videos, .post .fig__panels { gap: 0.5em; }
+  .post .fig__videos figcaption, .post .fig__label { font-size: 12px; }
+  .post .fig__label strong { display: block; margin-right: 0; }
 }
 .post figcaption { font-family: inherit; }
 .post figure.fig figcaption { font-size: 0.85em; color: #5d7471; line-height: 1.5; margin-top: 0.6em; }
