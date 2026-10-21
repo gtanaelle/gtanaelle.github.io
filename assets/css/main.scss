@@ -227,6 +227,33 @@ $post-serif: "Source Serif 4", "Source Serif Pro", Georgia, Cambria, "Times New 
 .post .fig__panels img { margin: 0; border-radius: 3px; }
 .post .fig__label { margin: 0 0 0.35em; font-size: 0.85em; color: #5d7471; text-align: center; }
 .post .fig__label strong { color: #1f3b3a; margin-right: 0.3em; }
+
+/* Figure with a reading key beside it (stacks on phones) */
+.post figure.fig--keyed {
+  display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 0 1.6em; align-items: center;
+  padding: 1.1em 1.2em; background: rgba(143, 192, 180, 0.10); border: 1px solid #e3ddca; border-radius: 8px;
+  img { margin: 0; }
+  figcaption { grid-column: 1 / -1; text-align: center; margin-top: 0.8em; }
+}
+.post .fig__key {
+  font-size: 15px; line-height: 1.5; color: #3d5452;
+  .fig__key-title { margin: 0 0 0.6em; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #5d7471; }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li { display: flex; gap: 0.65em; align-items: flex-start; margin: 0 0 0.75em; }
+  li:last-child { margin-bottom: 0; }
+  b { color: #1f3b3a; }
+}
+.post .fig__swatch { flex: none; width: 22px; height: 22px; margin-top: 0.05em; display: inline-flex; align-items: center; justify-content: center; }
+.post .fig__swatch--contour { border-radius: 50%; background: radial-gradient(circle, #d7e65b 0 18%, transparent 19% 32%, #3f9a8c 33% 40%, transparent 41% 58%, #4f6b9a 59% 66%, transparent 67%); }
+.post .fig__swatch--dot::before { content: ""; width: 13px; height: 13px; border-radius: 50%; background: #2a8d8a; box-shadow: 0 0 0 2px #4b4a8a; }
+.post .fig__swatch--greedy::before, .post .fig__swatch--weighted::before { content: ""; width: 22px; height: 4px; border-radius: 2px; background: var(--c);
+  clip-path: polygon(0 0, 70% 0, 70% -150%, 100% 50%, 70% 250%, 70% 100%, 0 100%); }
+.post .fig__swatch--greedy::before { --c: #e3193b; height: 10px; clip-path: polygon(0 35%, 62% 35%, 62% 0, 100% 50%, 62% 100%, 62% 65%, 0 65%); }
+.post .fig__swatch--weighted::before { --c: #11811c; height: 10px; clip-path: polygon(0 35%, 62% 35%, 62% 0, 100% 50%, 62% 100%, 62% 65%, 0 65%); }
+@media (max-width: 36em) {
+  .post figure.fig--keyed { grid-template-columns: 1fr; padding: 0.9em; }
+  .post figure.fig--keyed .fig__key { margin-top: 1em; }
+}
 @media (max-width: 30em) {
   .post .fig__videos, .post .fig__panels { gap: 0.5em; }
   .post .fig__videos figcaption, .post .fig__label { font-size: 12px; }

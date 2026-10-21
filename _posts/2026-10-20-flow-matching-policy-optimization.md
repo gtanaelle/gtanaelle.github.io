@@ -55,17 +55,44 @@ $$
 
 Because this path is deterministic, the probability of each action *can* be computed. Existing flow-based RL methods still backpropagate through that path, though, and approximate the entropy to keep the cost down. FMER avoids both: training never simulates the path, and the entropy is exact.
 
-## Ingredient 1: policy mirror descent as weighted flow matching
+## Entropy-constrained policy mirror descent
 
-Policy mirror descent improves a policy in small steps: each new policy should earn more reward than the current one while staying close to it. The ideal next policy has a simple form:
+FMER asks two things of each policy update. It should **improve the policy, but not too much at once**, and it should **keep the policy random enough to keep exploring**. Each request becomes one term of the objective.
+
+**Policy mirror descent (PMD)** handles the first. The next policy $$\pi_{k+1}$$ should pick actions with high advantage $$A$$ (how much better an action is than the policy's average), while staying close to the current policy $$\pi_k$$:
+
+$$
+\pi_{k+1} = \arg\max_{\pi}\; \mathbb{E}_{s\sim\mathcal{D}}\Big[\,\mathbb{E}_{a\sim\pi(\cdot \mid s)}\big[A^{\pi_k}(s,a)\big] \;-\; \tau\, D_{\text{KL}}\big(\pi(\cdot \mid s)\,\big\|\,\pi_k(\cdot \mid s)\big)\Big].
+$$
+
+The KL term is a trust region. The temperature $$\tau$$ sets how far one update may move: a small $$\tau$$ allows big steps, a large one keeps the policy near where it was. This problem has a closed-form solution, so the update can be written as a weighted maximum-likelihood problem: raise the log-probability of actions from the current policy, each weighted by $$\exp(A/\tau)$$ and normalized per state by $$Z(s) = \mathbb{E}_{a\sim\pi_k}\big[\exp(A(s,a)/\tau)\big]$$.
+
+**An entropy constraint** handles the second. The entropy $$H(\pi)$$ measures how random the policy is. We require it to stay above a target $$\bar{H}$$, so that exploration doesn't die out early:
+
+$$
+\min_{\theta}\; -\mathbb{E}_{s,\,a\sim\pi_k}\Big[\frac{1}{Z(s)}\exp\!\big(A(s,a)/\tau\big)\,\log \pi_\theta(a \mid s)\Big]
+\quad \text{s.t.} \quad \mathbb{E}_{s}\big[H(\pi_\theta(\cdot \mid s))\big] \ge \bar{H}.
+$$
+
+**Putting them together.** As in SAC, the constraint becomes a penalty with a Lagrange multiplier $$\alpha$$, which is tuned automatically: it grows when the entropy drops below the target and shrinks otherwise. Unlike SAC, the critic still estimates the plain discounted return, with no entropy bonus; entropy enters only through this constraint on the policy. So FMER is entropy-*constrained* policy optimization rather than full maximum-entropy RL. The result is one loss with one term per request:
+
+$$
+\mathcal{L}_{\text{FMER}}(\theta) = \underbrace{\mathcal{L}_{\text{W-CFM}}(\theta)}_{\text{mirror descent}} \;+\; \alpha\, \underbrace{\mathcal{L}_{\text{ent}}(\theta)}_{\text{entropy}}.
+$$
+
+For a flow policy, neither term is easy as written. Both $$\log \pi_\theta$$ and $$H(\pi_\theta)$$ normally require running the generation path and differentiating through it. The next two sections replace each term with a loss that avoids this.
+
+## Ingredient 1: the mirror descent term as weighted flow matching
+
+The closed-form solution of the mirror descent step is the target the policy should move towards:
 
 $$
 \pi^*(a \mid s) \;=\; \frac{\pi_k(a \mid s)\, \exp\!\big(A(s,a)/\tau\big)}{Z(s)}.
 $$
 
-In words: take the current policy $$\pi_k$$ and boost the actions that are better than average (high advantage $$A$$). The temperature $$\tau$$ controls how big the step is, and $$Z(s)$$ just normalizes the result.
+In words: take the current policy and boost the actions that are better than average. $$Z(s)$$ just normalizes the result.
 
-Fitting a flow policy to this target directly would mean differentiating through the whole generation path. Our main theoretical result (Theorem 1) shows that this isn't necessary. Sample some actions from the current policy, give each one the weight $$w(s,a) = \exp(A(s,a)/\tau)/Z(s)$$, and train with the ordinary flow matching loss, weighted by those numbers:
+Fitting a flow policy to this target by maximum likelihood would mean differentiating through the whole generation path. Our theoretical result (Theorem 1) shows that this isn't necessary. Sample some actions from the current policy, give each one the weight $$w(s,a) = \exp(A(s,a)/\tau)/Z(s)$$, and train with the ordinary flow matching loss, weighted by those numbers:
 
 $$
 \mathcal{L}_{\text{W-CFM}}(\theta) = \mathbb{E}\Big[\, w(s,a)\, \big\| v_\theta(x_t, t, s) - (x_1 - x_0) \big\|^2 \Big],
@@ -76,9 +103,23 @@ The velocity field is asked to point along the straight line from the noise $$x_
 
 **Weigh every candidate, not just the best one.** In practice, FMER samples several candidate actions per state and lets the critic score them. Learning from all of them, in proportion to their weights, works better than copying only the top-scoring one: the top candidate may sit on a local peak, or the critic may simply overrate it.
 
+<figure class="fig fig--keyed">
+  <img src="{{ '/images/blog/fmer/weighted-vs-greedy.png' | relative_url }}" alt="Contour plot of a Q-value landscape over two action dimensions with 16 sampled candidate actions. A red greedy arrow points to a local maximum at the top left; a green weighted arrow points towards the global maximum at the bottom right." loading="lazy">
+  <div class="fig__key">
+    <p class="fig__key-title">How to read it</p>
+    <ul>
+      <li><span class="fig__swatch fig__swatch--contour"></span><span><b>Contours</b> are the true Q-values for one state. The best actions are the bright peak at the bottom right; the hill at the top left is only a local peak.</span></li>
+      <li><span class="fig__swatch fig__swatch--dot"></span><span><b>Dots</b> are 16 candidate actions sampled from the policy. The small arrows show how much weight each one gets.</span></li>
+      <li><span class="fig__swatch fig__swatch--greedy"></span><span><b>Greedy</b> copies the single best sample and climbs the local peak.</span></li>
+      <li><span class="fig__swatch fig__swatch--weighted"></span><span><b>Weighted</b> (FMER) pools all the candidates and heads towards the global optimum.</span></li>
+    </ul>
+  </div>
+  <figcaption>Weighted vs. greedy policy updates from the same 16 candidates.</figcaption>
+</figure>
+
 **Step size, tuned automatically.** If $$\tau$$ is too large, the policy barely moves; if it is too small, a single candidate takes over. FMER measures how evenly the weights are spread with the effective sample size, $$\text{ESS} = 1/\sum_l \hat{w}_l^2$$, which runs from 1 (one candidate dominates) to $$M$$ (all $$M$$ candidates count equally). It adjusts $$\tau$$ to keep ESS at a target value, so it needs no per-environment tuning.
 
-## Ingredient 2: an entropy you can compute exactly
+## Ingredient 2: the entropy term, computed exactly
 
 Because the flow is deterministic, its entropy can be computed exactly by tracking how the flow stretches or squeezes space as it carries noise to actions. That stretching is the divergence of the velocity field, integrated along the path:
 
@@ -92,13 +133,13 @@ $$
 \nabla_a \cdot v^a = \nabla_x \cdot v_\theta \;-\; 2\,\big\langle \tanh(x),\, v_\theta(x, t, s) \big\rangle .
 $$
 
-The second term pushes back when the policy piles probability onto the action limits. Like the main loss, the corrected entropy is evaluated along the same straight paths, so the flow never has to be simulated.
-
-FMER then keeps the entropy above a target level, with a weight $$\alpha$$ that is tuned automatically, much like SAC. The full policy objective is
+The second term pushes back when the policy piles probability onto the action limits. Maximizing entropy means minimizing its negative, so the entropy loss is the corrected divergence with a minus sign:
 
 $$
-\mathcal{L}_{\text{FMER}}(\theta) = \mathcal{L}_{\text{W-CFM}}(\theta) + \alpha\, \mathcal{L}_{\text{ent}}(\theta).
+\mathcal{L}_{\text{ent}}(\theta) = -\,\mathbb{E}_{t,\,x_t}\Big[\nabla_x \cdot v_\theta(x_t, t, s) \;-\; 2\,\big\langle \tanh(x_t),\, v_\theta(x_t, t, s) \big\rangle\Big].
 $$
+
+Like the mirror descent loss, it is evaluated along the same straight paths, so the flow never has to be simulated. Plugging both losses into the combined objective $$\mathcal{L}_{\text{FMER}}$$ gives the full training signal.
 
 ## The training loop
 
@@ -132,13 +173,13 @@ The baselines fail in telling ways. SAC falls apart once there are several task 
 
 - **Entropy constraint.** Without it, the policy turns almost deterministic early in training and completes 0% of the 7-task kitchen.
 - **Weights.** With equal weights, the policy just imitates its own samples, and performance drops.
-- **Squashing correction.** Without it, every MuJoCo score goes down, HalfCheetah from 12.3k to 7.7k.
+- **$$\tanh$$ squashing correction.** Replacing $$\tanh$$ with hard clipping, and so dropping the correction, lowers every MuJoCo score, HalfCheetah from 12.3k to 7.7k.
 
 FMER also trains faster than the diffusion baselines, though slower than the lightest flow-based method.
 
 ## Limitations
 
-- **Speed.** FMER is slower than flow methods that generate actions in one or a few steps, because computing the exact entropy takes extra work.
+- **Speed.** FMER trains faster than the diffusion baselines but slower than SAC-Flow, because it integrates more ODE steps (10 vs. 4) and computes the exact entropy instead of a cheaper surrogate.
 - **Simulation only.** All experiments are in simulation. Whether the gains carry over to real robots is still an open question.
 
 ## Takeaway
