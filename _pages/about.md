@@ -42,6 +42,8 @@ But every new problem meant designing a new abstraction by hand. That pushed me 
 - *2025.07*, **Summer School**, ELLIS Unit Cambridge Summer School on Probabilistic Machine Learning, University of Cambridge, UK.
 - *2025.07*, **Summer School**, London Geometry and Machine Learning (LOGML), Imperial College London, UK.
 - *2025.06*, **Invited Speaker**, Graph&Data@TUDelft seminar, Delft University of Technology.
+- *2025.05 - 2026.06*, **Thesis Supervisor**. Supervised four BSc students on graph data augmentation, and one MSc student on learning from asynchronous, partially observed graph data.
+- *2025.05 - 2026.06*, **Seminar Co-organizer**, Graph&Data@TUDelft seminar.
 - *2022.04 - 2023.05*, **Machine Learning Intern** (Drug Discovery), StoneWise, Beijing, China.
 - *2020.11 - 2021.04*, **Graduate Teaching Assistant**, *Convergence, Integration, Probability* and *Partial Differential Equations*, CentraleSupélec, France.
 
